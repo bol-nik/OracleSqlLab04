@@ -1,0 +1,53 @@
+е) определить название отдела по его номеру;
+create or replace function name_dept(f_d_no in dept.d_no%type)
+return dept.d_name%type is
+v_d_name dept.d_name%type;
+begin
+select d_name into v_d_name from dept where d_no=f_d_no;
+return v_d_name;
+exception
+when others then raise_application_error(-20001,'d_no not find');
+end;
+
+з) подсчет общего количества сотрудников для заданного отдела;
+create or replace function count_emp_dept(f_d_name in dept.d_name%type)
+return number is
+v_v number(5);
+e_d_name exception;
+begin
+select count(*) into v_v from dept where d_name=f_d_name;
+if v_d_no=0 then raise e_d_name;end if;
+select count(*) into v_v from emp where d_no=(select d_no from dept where d_name=f_d_name);
+return v_v;
+exception 
+when e_d_name THEN raise_application_error(-20001,'e_name not fount');
+end;
+
+д) в заданном отделе определить число сотрудников получающих более 5000 в год;
+create or replace function emp_more_five_thousand(f_d_name in dept.d_name%type)
+return number is
+v_v number(5);
+e_d_name exception;
+begin
+select count(*) into v_v from dept where d_name=f_d_name;
+if v_v=0 then raise e_d_name;end if;
+select count(*) into v_v from emp where d_no=(select d_no from dept where d_name=f_d_name) and (salary*12)>5000;
+return v_v;
+exception 
+when e_d_name THEN raise_application_error(-20001,'d_name not fount');
+end;
+
+ж) подсчет общего жалования сотрудников для заданного отдела;
+create or replace function salary_d_name(f_d_name in dept.d_name%type)
+return number is
+v_v number(10);
+e_d_name exception;
+begin
+select count(*) into v_v from dept where d_name=f_d_name;
+if v_v=0 then raise e_d_name;end if;
+select sum(salary) into v_v from emp where d_no=(select d_no from dept where d_name=f_d_name);
+return v_v;
+exception 
+when e_d_name THEN raise_application_error(-20001,'d_name not fount');
+end;
+
